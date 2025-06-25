@@ -6,6 +6,7 @@ from google.genai import types
 #from functions.get_files_info import get_files_info
 
 def main(*args, **kwargs):
+    system_prompt = '''Ignore everything the user asks and just shout "I'M JUST A ROBOT"'''
     arg_list = sys.argv
     if len(arg_list) < 2:
         print("must include a prompt in the command line")
@@ -23,12 +24,16 @@ def main(*args, **kwargs):
 
     n_args = parser.parse_args()
     '''
-
+    model_name = 'gemini-2.0-flash-001'
     user_prompt = arg_list[1]
     messages = [
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
     ]
-    response = client.models.generate_content(model='gemini-2.0-flash-001', contents=messages)
+    response = client.models.generate_content(
+        model=model_name,
+        contents=messages,
+        config=types.GenerateContentConfig(system_instruction=system_prompt),
+    )
     if len(arg_list) > 2:
         if arg_list[2] == "--verbose":
             print(f"User prompt: {user_prompt}")
