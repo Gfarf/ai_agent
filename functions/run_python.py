@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import subprocess
 
-def run_python_file(working_directory, file_path):
+def run_python_file(working_directory, file_path, args=None):
     try:
         permitido = Path(os.path.abspath(Path(working_directory)))
         if file_path.startswith(".."):
@@ -14,19 +14,20 @@ def run_python_file(working_directory, file_path):
             return f'Error: File "{file_path}" not found.'
         if not file_path.endswith('.py'):
             return f'Error: "{file_path}" is not a Python file.'
+        commands = ["python3",file]
+        if args:
+            commands.extend(args)
+        result = subprocess.run(commands, capture_output=True, text=True, timeout=30)
+        output = []
+        if result.stdout:
+            output.append(f"STDOUT:\n{result.stdout}")
+        if result.stderr:
+            output.append(f"STDERR:\n{result.stderr}")
 
+        if result.returncode != 0:
+            output.append(f"Process exited with code {result.returncode}")
 
-        comp_process = subprocess.run(["python3",file], capture_output=True, timeout=30)
-#        print(comp_process)
-#        print(f'STDOUT: {comp_process.stdout}')
-#        print(f'STDERR: {comp_process.stderr}')
-        if comp_process.stdout == '' and comp_process.stderr == '':
-            return "No output produced."
-        result = 'STDOUT: ' + str(comp_process.stdout, 'utf-8') + '\nSTDERR: ' + str(comp_process.stderr, 'utf-8')
-        if comp_process.returncode != 0:
-            result += f"Process exited with code {comp_process.returncode}"
-
-        return result
+        return "\n".join(output) if output else "No output produced."
 
     except Exception as e:
         return f"Error: executing Python file: {e}"    

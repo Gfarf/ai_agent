@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
+from config import MAX_CHARS
 
-MAX_CHARS = 10000
 
 def get_file_content(working_directory, file_path):
     file_content_string = ""
