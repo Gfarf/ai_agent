@@ -3,7 +3,7 @@ from functions.get_files_content import get_file_content
 from functions.get_files_info import get_files_info
 from functions.run_python import run_python_file
 from functions.write_file import write_file
-from config import working_directory
+from config import WORKING_DIR
 
 def call_function(function_call_part, verbose=False):
     function_name = function_call_part.name
@@ -24,8 +24,11 @@ def call_function(function_call_part, verbose=False):
                     )
                 ],
             )
-    executable = functions_calls[function_name]
-    result = executable(working_directory, **function_args)
+ 
+    args = dict(function_call_part.args)
+    args["working_directory"] = WORKING_DIR
+    result = functions_calls[function_name](**args)
+
     return types.Content(
             role="tool",
             parts=[

@@ -1,2 +1,2 @@
 MAX_CHARS = 10000
-working_directory = "./calculator"
+WORKING_DIR = "./calculator"
